@@ -14,6 +14,8 @@ func main() {
 	// Some stats
 	module := erf.FromFile(*fileName)
 
+	fmt.Println("Header")
+	fmt.Println("")
 	fmt.Println(fmt.Sprintf("File type:               '%s'", module.Header.FileType))
 	fmt.Println(fmt.Sprintf("Version:                 '%s'", module.Header.Version))
 	fmt.Println(fmt.Sprintf("LanguageCount:           %d", module.Header.LanguageCount))
@@ -25,4 +27,25 @@ func main() {
 	fmt.Println(fmt.Sprintf("BuildYear:               %d (%d)", module.Header.BuildYear, module.Header.BuildYear+1900))
 	fmt.Println(fmt.Sprintf("BuildDay:                %d", module.Header.BuildDay))
 	fmt.Println(fmt.Sprintf("DescriptionStrRef:       %d", module.Header.DescriptionStrRef))
+
+	fmt.Println("===================================")
+	fmt.Println("")
+	fmt.Println("Localized strings list")
+	for _, element := range module.LocalizedStringList {
+		fmt.Println(fmt.Sprintf("LanguageId: %d, Size: %d: %s", element.LanguageID, element.StringSize, element.String))
+	}
+
+	fmt.Println("===================================")
+	fmt.Println("")
+	fmt.Println("Keys list")
+	for _, element := range module.KeyList {
+		fmt.Println(fmt.Sprintf("ResRef: %s, ResID: %d, ResType: %d", element.ResRef, element.ResID, element.ResType))
+	}
+
+	fmt.Println("===================================")
+	fmt.Println("")
+	var resourceDataBytes = len(module.ResourceData)
+	var resourceDataKB = resourceDataBytes / 1024
+	var resourceDataMB = resourceDataKB / 1024
+	fmt.Println(fmt.Sprintf("Resource data size: %d MB (%d KB, %d bytes)", resourceDataMB, resourceDataKB, resourceDataBytes))
 }
