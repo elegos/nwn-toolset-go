@@ -1,5 +1,7 @@
 package erf
 
+import auroraFile "aurora/file"
+
 import (
 	"aurora/tools"
 	"aurora/tools/fileReader"
@@ -32,7 +34,7 @@ func extractLocalizedStringList(file *os.File, localizedStringSize uint32) []Loc
 	var i = uint32(0)
 	for ; i < localizedStringSize; i++ {
 		var element = LocalizedStringElement{
-			LanguageID: Language(fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4))),
+			LanguageID: auroraFile.Language(fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4))),
 			StringSize: fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4)),
 		}
 
@@ -55,7 +57,7 @@ func extractKeyList(file *os.File, offsetToKeyList int64, entryCount uint32) []K
 		var element = KeyElement{
 			ResRef:  string(fileReader.ReadAndCheck(file, 16)),
 			ResID:   fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4)),
-			ResType: fileReader.BytesToUint16LE(fileReader.ReadAndCheck(file, 2)),
+			ResType: auroraFile.ResourceType(fileReader.BytesToUint16LE(fileReader.ReadAndCheck(file, 2))),
 		}
 
 		var unused = fileReader.ReadAndCheck(file, 2)

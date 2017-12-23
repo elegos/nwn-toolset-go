@@ -1,6 +1,7 @@
 package main
 
 import (
+	"aurora/file"
 	"aurora/file/erf"
 	"flag"
 	"fmt"
@@ -31,15 +32,17 @@ func main() {
 	fmt.Println("===================================")
 	fmt.Println("")
 	fmt.Println("Localized strings list")
+	fmt.Println("")
 	for _, element := range module.LocalizedStringList {
-		fmt.Println(fmt.Sprintf("LanguageId: %d, Size: %d: %s", element.LanguageID, element.StringSize, element.String))
+		fmt.Println(fmt.Sprintf("Language: %s, Size: %d: %s", file.LanguageLookup[element.LanguageID], element.StringSize, element.String))
 	}
 
 	fmt.Println("===================================")
 	fmt.Println("")
 	fmt.Println("Keys list")
+	fmt.Println("")
 	for _, element := range module.KeyList {
-		fmt.Println(fmt.Sprintf("ResRef: %s, ResID: %d, ResType: %d", element.ResRef, element.ResID, element.ResType))
+		fmt.Println(fmt.Sprintf("ResRef: %s, ResID: %d,\tResType: %s", element.ResRef, element.ResID, file.ResourceTypeLookup[element.ResType]))
 	}
 
 	fmt.Println("===================================")
