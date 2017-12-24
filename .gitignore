@@ -1,7 +1,5 @@
 /bin/*
 /pkg/*
-/src/*
-
-!/src/aurora/
-!/src/toolset/
-!/src/cli/
+/src/*.*
+/.ninja_deps
+/.ninja_log

@@ -1,0 +1,18 @@
+goenv = GOPATH=`pwd` GOBIN=`pwd`/bin
+
+# Rules
+rule cp
+  command = cp -rf $in $out
+
+rule gobuild
+  command = $goenv go build -o $out $in
+
+rule goget
+  command = $goenv go get $package
+
+# Build (src requirements)
+#build src/github.com/example/dependency: goget
+#  package = github.com/example/dependency
+
+# Build (binary)
+build bin/cli: gobuild src/cli/main.go
