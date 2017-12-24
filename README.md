@@ -18,7 +18,7 @@ will parse the build.ninja file and compile the executable in the `bin` folder.
 
 You can manually build the project running the following commands:
 
-- Linux/OSX: `GOBIN=`pwd`/bin GOPATH=`pwd` go install [project name]`
+- Linux/OSX: `GOBIN=\`pwd\`/bin GOPATH=\`pwd\` go install [project name]`
 - Windows: `set GOBIN=%path%; set GOPATH=%path%; go install [project name]`
 
 Where `[project name]` can be `cli` or any `src` top-level directory (note: the `aurora`
