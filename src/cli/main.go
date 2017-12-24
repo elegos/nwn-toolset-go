@@ -42,7 +42,12 @@ func main() {
 	fmt.Println("Keys list")
 	fmt.Println("")
 	for _, element := range module.KeyList {
-		fmt.Println(fmt.Sprintf("ResRef: %s, ResID: %d,\tResType: %s", element.ResRef, element.ResID, file.ResourceTypeLookup[element.ResType]))
+		fmt.Println(fmt.Sprintf(
+			"ResRef: %16s, ResID: %d,\tResType: %s",
+			element.ResRef,
+			element.ResID,
+			file.ResourceTypeLookup[element.ResType],
+		))
 	}
 
 	fmt.Println("===================================")
