@@ -1,18 +1,18 @@
 package erf
 
-import auroraFile "aurora/file"
-
 import (
+	auroraFile "aurora/file"
 	"aurora/tools"
 	"aurora/tools/fileReader"
 	"os"
+	"strings"
 )
 
 func extractHeader(file *os.File) Header {
 	var result = Header{}
 
-	result.FileType = string(fileReader.ReadAndCheck(file, 4))
-	result.Version = string(fileReader.ReadAndCheck(file, 4))
+	result.FileType = strings.Trim(string(fileReader.ReadAndCheck(file, 4)), "\x00")
+	result.Version = strings.Trim(string(fileReader.ReadAndCheck(file, 4)), "\x00")
 	result.LanguageCount = fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4))
 	result.LocalizedStringSize = fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4))
 	result.EntryCount = fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4))
@@ -38,7 +38,7 @@ func extractLocalizedStringList(file *os.File, localizedStringSize uint32) []Loc
 			StringSize: fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4)),
 		}
 
-		element.String = string(fileReader.ReadAndCheck(file, element.StringSize))
+		element.String = strings.Trim(string(fileReader.ReadAndCheck(file, element.StringSize)), "\x00")
 
 		result = append(result, element)
 	}
@@ -55,7 +55,7 @@ func extractKeyList(file *os.File, offsetToKeyList int64, entryCount uint32) []K
 	var i = uint32(0)
 	for ; i < entryCount; i++ {
 		var element = KeyElement{
-			ResRef:  string(fileReader.ReadAndCheck(file, 16)),
+			ResRef:  strings.Trim(string(fileReader.ReadAndCheck(file, 16)), "\x00"),
 			ResID:   fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4)),
 			ResType: auroraFile.ResourceType(fileReader.BytesToUint16LE(fileReader.ReadAndCheck(file, 2))),
 		}
