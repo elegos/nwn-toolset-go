@@ -11,7 +11,7 @@ func extract(module *erf.ERF) {
 }
 
 func main() {
-	fileName := flag.String("file", "", "the file file name")
+	fileName := flag.String("file", "", "the module's file name")
 	extractFlag := flag.String("extract", "", "ACTION: extract the file contents in the specified directory")
 
 	flag.Parse()
