@@ -22,6 +22,12 @@ func main() {
 	extract := flag.String("extract", "", "ACTION: extract the file contents in the specified directory")
 	flag.Parse()
 
+	if flag.NArg() < 1 {
+		flag.Usage()
+
+		return
+	}
+
 	fileName := flag.Arg(0)
 
 	stat, err := os.Stat(fileName)
