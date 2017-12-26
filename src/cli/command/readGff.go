@@ -5,6 +5,7 @@ import (
 	"aurora/file/erf"
 	"aurora/file/gff"
 	"fmt"
+	"strconv"
 )
 
 // ReadGffFromErf read GFF files from ERF
@@ -47,5 +48,20 @@ func ReadGffFromErf(file *erf.ERF) {
 			data.Header.FieldIndicesCount,
 			data.Header.ListIndicesCount,
 		))
+		var structArray = []string{}
+		for _, element := range data.StructArray {
+			var eType = strconv.Itoa(int(element.Type))
+			if element.Type == 0xFFFFFFFF {
+				eType = "Top-Level struct"
+			}
+			structArray = append(structArray, fmt.Sprintf(
+				"\n  {Type: %16s, DataOrDataOffset: %3d, FieldCount: %3d}",
+				eType,
+				element.DataOrDataOffset,
+				element.FieldCount,
+			))
+		}
+		fmt.Println(fmt.Sprintf("StructArray: %v", structArray))
+		fmt.Println("")
 	}
 }

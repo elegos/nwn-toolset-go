@@ -2,7 +2,6 @@ package gff
 
 import (
 	"aurora/tools/fileReader"
-	"os"
 	"strings"
 )
 
@@ -27,8 +26,22 @@ func extractHeaderFromBytes(bytes []byte) Header {
 	return result
 }
 
-func extractHeaderFromFile(file *os.File) Header {
-	var bytes = fileReader.ReadAndCheck(file, 56)
+// data.Header MUST be initialized
+// bytes are ONLY the StructArray ones (or at least bytes[0] is the first of them)
+func extractStructArrayFromBytes(bytes []byte, header Header) []StructArrayElement {
+	var result = []StructArrayElement{}
 
-	return extractHeaderFromBytes(bytes)
+	var i = uint32(0)
+	var index = 0
+	for ; i < header.StructCount; i++ {
+		result = append(result, StructArrayElement{
+			Type:             fileReader.BytesToUint32LE(bytes[index : index+4]),
+			DataOrDataOffset: fileReader.BytesToUint32LE(bytes[index+4 : index+8]),
+			FieldCount:       fileReader.BytesToUint32LE(bytes[index+4 : index+8]),
+		})
+
+		index += 8
+	}
+
+	return result
 }
