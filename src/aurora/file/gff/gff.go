@@ -56,8 +56,8 @@ func FromBytes(bytes []byte) GFF {
 	var result = GFF{}
 
 	result.Header = extractHeaderFromBytes(bytes)
-	result.StructArray = extractStructArrayFromBytes(bytes[result.Header.StructOffset:], result.Header)
-	result.FieldArray = extractFieldArrayFromBytes(bytes[result.Header.FieldOffset:], result.Header)
+	result.StructArray = extractStructArrayFromBytes(bytes, result.Header)
+	result.FieldArray = extractFieldArrayFromBytes(bytes, result.Header)
 
 	return result
 }

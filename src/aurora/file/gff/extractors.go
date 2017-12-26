@@ -27,12 +27,12 @@ func extractHeaderFromBytes(bytes []byte) Header {
 }
 
 // data.Header MUST be initialized
-// bytes are ONLY the StructArray ones (or at least bytes[0] is the first of them)
+// bytes are the bytes of the entire file
 func extractStructArrayFromBytes(bytes []byte, header Header) []StructArrayElement {
 	var result = []StructArrayElement{}
 
 	var i = uint32(0)
-	var index = 0
+	var index = header.StructOffset
 	for ; i < header.StructCount; i++ {
 		result = append(result, StructArrayElement{
 			Type:             fileReader.BytesToUint32LE(bytes[index : index+4]),
