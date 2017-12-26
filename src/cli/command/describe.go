@@ -20,7 +20,11 @@ func DescribeErf(module *erf.ERF) {
 	fmt.Println(fmt.Sprintf("OffsetToResourceList:    %d", module.Header.OffsetToResourceList))
 	fmt.Println(fmt.Sprintf("BuildYear:               %d (%d)", module.Header.BuildYear, module.Header.BuildYear+1900))
 	fmt.Println(fmt.Sprintf("BuildDay:                %d", module.Header.BuildDay))
-	fmt.Println(fmt.Sprintf("DescriptionStrRef:       %d", module.Header.DescriptionStrRef))
+	if module.Header.DescriptionStrRef < 0xFFFFFFFF {
+		fmt.Println(fmt.Sprintf("DescriptionStrRef:       %d", module.Header.DescriptionStrRef))
+	} else {
+		fmt.Println("DescriptionStrRef:       n/a (0xFFFFFFFF)")
+	}
 
 	fmt.Println("===================================")
 	fmt.Println("")
