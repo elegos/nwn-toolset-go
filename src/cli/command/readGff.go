@@ -63,5 +63,17 @@ func ReadGffFromErf(file *erf.ERF) {
 		}
 		fmt.Println(fmt.Sprintf("StructArray: %v", structArray))
 		fmt.Println("")
+
+		var fieldArray = []string{}
+		for _, element := range data.FieldArray {
+			fieldArray = append(fieldArray, fmt.Sprintf(
+				"\n  {Type: %12d, LabelIndex: %12d, DataOrDataOffset: %12d}",
+				element.Type,
+				element.LabelIndex,
+				element.DataOrDataOffset,
+			))
+		}
+		fmt.Println(fmt.Sprintf("FieldArray: %v", fieldArray))
+		fmt.Println("")
 	}
 }

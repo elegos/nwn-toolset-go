@@ -37,10 +37,29 @@ func extractStructArrayFromBytes(bytes []byte, header Header) []StructArrayEleme
 		result = append(result, StructArrayElement{
 			Type:             fileReader.BytesToUint32LE(bytes[index : index+4]),
 			DataOrDataOffset: fileReader.BytesToUint32LE(bytes[index+4 : index+8]),
-			FieldCount:       fileReader.BytesToUint32LE(bytes[index+4 : index+8]),
+			FieldCount:       fileReader.BytesToUint32LE(bytes[index+8 : index+12]),
 		})
 
-		index += 8
+		index += 12
+	}
+
+	return result
+}
+
+// bytes are the bytes of the entire file
+func extractFieldArrayFromBytes(bytes []byte, header Header) []FieldArrayElement {
+	var result = []FieldArrayElement{}
+
+	var i = uint32(0)
+	var index = header.FieldOffset
+	for ; i < header.FieldCount; i++ {
+		result = append(result, FieldArrayElement{
+			Type:             fileReader.BytesToUint32LE(bytes[index : index+4]),
+			LabelIndex:       fileReader.BytesToUint32LE(bytes[index+4 : index+8]),
+			DataOrDataOffset: fileReader.BytesToUint32LE(bytes[index+8 : index+12]),
+		})
+
+		index += 12
 	}
 
 	return result

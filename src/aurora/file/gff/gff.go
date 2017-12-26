@@ -5,8 +5,6 @@ import (
 	"io/ioutil"
 )
 
-const headerByteSize = 56 // 14 fields * 4 bytes
-
 // Header structure of the GFF file format's header
 type Header struct {
 	FileType           string // 4 chars, 4 bytes
@@ -37,10 +35,20 @@ type StructArrayElement struct {
 	FieldCount       uint32 // Number of fields in this Struct
 }
 
+// FieldArrayElement the element of FieldArray
+type FieldArrayElement struct {
+	Type             uint32
+	LabelIndex       uint32 // Index into the Label Array
+	DataOrDataOffset uint32 // If Type is a simple data type, then this is the value
+	// actual of the field. If Type is a complex data type,
+	// then this is a byte offset into the Field Data block.
+}
+
 // GFF Generic File Format
 type GFF struct {
 	Header      Header
 	StructArray []StructArrayElement
+	FieldArray  []FieldArrayElement
 }
 
 // FromBytes read the bytes and return a GFF struct
@@ -48,7 +56,8 @@ func FromBytes(bytes []byte) GFF {
 	var result = GFF{}
 
 	result.Header = extractHeaderFromBytes(bytes)
-	result.StructArray = extractStructArrayFromBytes(bytes[headerByteSize:], result.Header)
+	result.StructArray = extractStructArrayFromBytes(bytes[result.Header.StructOffset:], result.Header)
+	result.FieldArray = extractFieldArrayFromBytes(bytes[result.Header.FieldOffset:], result.Header)
 
 	return result
 }
