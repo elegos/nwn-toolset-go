@@ -29,7 +29,7 @@ type Header struct {
 type StructArrayElement struct {
 	// Type programmer-defined integer ID
 	Type uint32 // Programmer-defined integer ID
-	// DataOrDataOffset if FieldCount = 1, this is an inde into the Field Array.
+	// DataOrDataOffset if FieldCount = 1, this is an index into the Field Array.
 	// If FieldCount > 1, this is a byte offset into the FieldIndices array, where there is
 	// an array of DWORDs having a number of elements equal to FieldCount. Each one of these
 	// DWORDs is an index into the Field Array
