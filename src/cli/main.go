@@ -20,6 +20,7 @@ func main() {
 	}
 
 	extract := flag.String("extract", "", "ACTION: extract the file contents in the specified directory")
+	readGff := flag.Bool("read-gff", false, "ACTION: explain the GFF files found in the module")
 	flag.Parse()
 
 	if flag.NArg() < 1 {
@@ -47,5 +48,14 @@ func main() {
 
 	if *extract != "" {
 		command.ExtractErf(&module, *extract)
+	}
+
+	if *readGff {
+		fmt.Println("")
+		fmt.Println("===================================")
+		fmt.Println("GFF files found in module")
+		fmt.Println("")
+
+		command.ReadGffFromErf(&module)
 	}
 }

@@ -38,7 +38,7 @@ func extractLocalizedStringList(file *os.File, localizedStringSize uint32) []Loc
 			StringSize: fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4)),
 		}
 
-		element.String = strings.Trim(string(fileReader.ReadAndCheck(file, element.StringSize)), "\x00")
+		element.String = strings.Trim(string(fileReader.ReadAndCheck(file, uint32(element.StringSize))), "\x00")
 
 		result = append(result, element)
 	}
