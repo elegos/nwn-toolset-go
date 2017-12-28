@@ -51,6 +51,13 @@ You can manually build the project running the following commands:
 Where `[project name]` can be `cli` or any `src` top-level directory (note: the `aurora`
 folder has no main package, thus it's not an executable)
 
+Please note that `ninja` won't compile the binary again, if it doesn't find any
+changes in the main go file. For this reason, you may want to run it in this way:
+
+    ninja -t clean; ninja [&& ./bin/cli src/aurora/file/erf/test/module.mod]
+
+`./bin/cli -h` will show the help message.
+
 ## IDE / editor of choice
 The editor of choice for this project is  [Atom](https://atom.io) with the
 [go-plus](https://atom.io/packages/go-plus) plugin. The plugin alone covers
