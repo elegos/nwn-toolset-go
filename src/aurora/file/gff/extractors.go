@@ -64,3 +64,56 @@ func extractFieldArrayFromBytes(bytes []byte, header Header) []FieldArrayElement
 
 	return result
 }
+
+func extractLabelArrayFromBytes(bytes []byte, header Header) []string {
+	var result = []string{}
+
+	var i = uint32(0)
+	var index = header.LabelOffset
+	for ; i < header.LabelCount; i++ {
+		result = append(result, strings.Trim(string(bytes[index:index+16]), "x00"))
+
+		index += 16
+	}
+
+	return result
+}
+
+func extractFieldDataBlockFromBytes(bytes []byte, header Header) []byte {
+	return bytes[header.FieldDataOffset : header.FieldDataOffset+header.FieldDataCount]
+}
+
+func extractFieldIndicesArrayFromBytes(bytes []byte, header Header) []uint32 {
+	var result = []uint32{}
+	var i = uint32(0)
+	var index = header.FieldIndicesOffset
+	for ; i*4 < header.FieldIndicesCount; i++ {
+		result = append(result, fileReader.BytesToUint32LE(bytes[index:index+4]))
+
+		index += 4
+	}
+
+	return result
+}
+
+func extractListIndicesArrayFromBytes(bytes []byte, header Header) []ListIndicesElement {
+	var result = []ListIndicesElement{}
+	var bytesRead = uint32(0)
+
+	var index = header.ListIndicesOffset
+	for bytesRead < header.ListIndicesCount {
+		var element = []uint32{}
+		var size = fileReader.BytesToUint32LE(bytes[index : index+4])
+		index += 4
+		var i = uint32(0)
+		for ; i < size; i++ {
+			element = append(element, fileReader.BytesToUint32LE(bytes[index:index+4]))
+			index += 4
+		}
+
+		result = append(result, ListIndicesElement(element))
+		bytesRead += (size * 4) + 4 // size + the length of the size bytes
+	}
+
+	return result
+}

@@ -44,11 +44,18 @@ type FieldArrayElement struct {
 	// then this is a byte offset into the Field Data block.
 }
 
+// ListIndicesElement the element of ListIndicesArray
+type ListIndicesElement []uint32
+
 // GFF Generic File Format
 type GFF struct {
-	Header      Header
-	StructArray []StructArrayElement
-	FieldArray  []FieldArrayElement
+	Header            Header
+	StructArray       []StructArrayElement
+	FieldArray        []FieldArrayElement
+	LabelArray        []string
+	FieldDataBlock    []byte
+	FieldIndicesArray []uint32
+	ListIndicesArray  []ListIndicesElement
 }
 
 // FromBytes read the bytes and return a GFF struct
@@ -58,6 +65,10 @@ func FromBytes(bytes []byte) GFF {
 	result.Header = extractHeaderFromBytes(bytes)
 	result.StructArray = extractStructArrayFromBytes(bytes, result.Header)
 	result.FieldArray = extractFieldArrayFromBytes(bytes, result.Header)
+	result.LabelArray = extractLabelArrayFromBytes(bytes, result.Header)
+	result.FieldDataBlock = extractFieldDataBlockFromBytes(bytes, result.Header)
+	result.FieldIndicesArray = extractFieldIndicesArrayFromBytes(bytes, result.Header)
+	result.ListIndicesArray = extractListIndicesArrayFromBytes(bytes, result.Header)
 
 	return result
 }

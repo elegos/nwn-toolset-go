@@ -75,5 +75,32 @@ func ReadGffFromErf(file *erf.ERF) {
 		}
 		fmt.Println(fmt.Sprintf("FieldArray: %v", fieldArray))
 		fmt.Println("")
+
+		fmt.Println("LabelArray:")
+		for index, element := range data.LabelArray {
+			fmt.Println(fmt.Sprintf("%3d: %s", index, element))
+		}
+		fmt.Println("")
+
+		fmt.Println(fmt.Sprintf("Field data block size: %d bytes", len(data.FieldDataBlock)))
+		fmt.Println("")
+
+		fmt.Println("FieldIndicesArray:")
+		for index, element := range data.FieldIndicesArray {
+			fmt.Println(fmt.Sprintf("%3d: %d", index, element))
+		}
+		fmt.Println("")
+
+		var listIndicesArray = []string{}
+		for _, element := range data.ListIndicesArray {
+			listIndicesArray = append(listIndicesArray, fmt.Sprintf(
+				"\n  %v", element,
+			))
+		}
+		fmt.Println(fmt.Sprintf("ListIndicesArray: %v", listIndicesArray))
+		fmt.Println("")
+
+		fmt.Println("================================================")
+		fmt.Println("")
 	}
 }
