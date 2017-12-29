@@ -3,50 +3,43 @@ package erf_test
 import (
 	"aurora/file"
 	"aurora/file/erf"
+	"aurora/tools/test"
 	"fmt"
 	"os"
 	"testing"
 )
 
-func expectString(t *testing.T, field string, expected string, found string) {
-	if expected != found {
-		t.Errorf("%s [%s], found '%s'", field, expected, found)
-	}
-}
-
-func expectUint32(t *testing.T, field string, expected uint32, found uint32) {
-	if expected != found {
-		t.Errorf("%s [%d], found '%d'", field, expected, found)
-	}
-}
-
 func checkKeyListElement(t *testing.T, erfData erf.ERF, index int, resRef string, resId uint32, resType file.ResourceType) {
-	expectString(t, fmt.Sprintf("KeyList[%d].ResRef", index), resRef, erfData.KeyList[index].ResRef)
-	expectUint32(t, fmt.Sprintf("KeyList[%d].ResID", index), resId, erfData.KeyList[index].ResID)
-	expectUint32(t, fmt.Sprintf("KeyList[%d].ResType", index), uint32(resType), uint32(erfData.KeyList[index].ResType))
+	test.ExpectString(t, fmt.Sprintf("KeyList[%d].ResRef", index), resRef, erfData.KeyList[index].ResRef)
+	test.ExpectUint32(t, fmt.Sprintf("KeyList[%d].ResID", index), resId, erfData.KeyList[index].ResID)
+	test.ExpectUint32(t, fmt.Sprintf("KeyList[%d].ResType", index), uint32(resType), uint32(erfData.KeyList[index].ResType))
 }
 
 func TestFromFile(t *testing.T) {
 	var filePath = "test/module.mod"
-	var erfData = erf.FromFile(filePath)
+	erfData, err := erf.FromFile(filePath)
+
+	if err != nil {
+		t.Error("Unexpected error")
+	}
 
 	// header
-	expectString(t, "Header.FileType", "MOD ", erfData.Header.FileType)
-	expectString(t, "Header.Version", "V1.0", erfData.Header.Version)
-	expectUint32(t, "Header.LanguageCount", 0, erfData.Header.LanguageCount)
-	expectUint32(t, "Header.LocalizedStringSize", 0, erfData.Header.LocalizedStringSize)
-	expectUint32(t, "Header.EntryCount", 17, erfData.Header.EntryCount)
-	expectUint32(t, "Header.OffsetToLocalizedString", 160, erfData.Header.OffsetToLocalizedString)
-	expectUint32(t, "Header.OffsetToKeyList", 160, erfData.Header.OffsetToKeyList)
-	expectUint32(t, "Header.OffsetToResourceList", 704, erfData.Header.OffsetToResourceList)
-	expectUint32(t, "Header.DescriptionStrRef", 0xffffffff, erfData.Header.DescriptionStrRef)
-	expectUint32(t, "Header.Reserved (bytes)", 116, uint32(len(erfData.Header.Reserved)))
+	test.ExpectString(t, "Header.FileType", "MOD ", erfData.Header.FileType)
+	test.ExpectString(t, "Header.Version", "V1.0", erfData.Header.Version)
+	test.ExpectUint32(t, "Header.LanguageCount", 0, erfData.Header.LanguageCount)
+	test.ExpectUint32(t, "Header.LocalizedStringSize", 0, erfData.Header.LocalizedStringSize)
+	test.ExpectUint32(t, "Header.EntryCount", 17, erfData.Header.EntryCount)
+	test.ExpectUint32(t, "Header.OffsetToLocalizedString", 160, erfData.Header.OffsetToLocalizedString)
+	test.ExpectUint32(t, "Header.OffsetToKeyList", 160, erfData.Header.OffsetToKeyList)
+	test.ExpectUint32(t, "Header.OffsetToResourceList", 704, erfData.Header.OffsetToResourceList)
+	test.ExpectUint32(t, "Header.DescriptionStrRef", 0xffffffff, erfData.Header.DescriptionStrRef)
+	test.ExpectUint32(t, "Header.Reserved (bytes)", 116, uint32(len(erfData.Header.Reserved)))
 
 	// localized string list
-	expectUint32(t, "LocalizedStringList (elements)", 0, uint32(len(erfData.LocalizedStringList)))
+	test.ExpectUint32(t, "LocalizedStringList (elements)", 0, uint32(len(erfData.LocalizedStringList)))
 
 	// key list
-	expectUint32(t, "KeyList (elements)", 17, uint32(len(erfData.KeyList)))
+	test.ExpectUint32(t, "KeyList (elements)", 17, uint32(len(erfData.KeyList)))
 	checkKeyListElement(t, erfData, 0, "barrowsinterior8", 0, file.Are)
 	checkKeyListElement(t, erfData, 1, "barrowsinterior8", 1, file.Gic)
 	checkKeyListElement(t, erfData, 2, "barrowsinterior8", 2, file.Git)
@@ -66,7 +59,7 @@ func TestFromFile(t *testing.T) {
 	checkKeyListElement(t, erfData, 16, "waypointpalcus", 16, file.Itp)
 
 	// resource list
-	expectUint32(t, "ResourceList (bytes)", erfData.Header.EntryCount, uint32(len(erfData.ResourceList)))
+	test.ExpectUint32(t, "ResourceList (bytes)", erfData.Header.EntryCount, uint32(len(erfData.ResourceList)))
 
 	// resource data
 	file, _ := os.Open(filePath)
@@ -75,7 +68,7 @@ func TestFromFile(t *testing.T) {
 	stat, _ := file.Stat()
 	toSkip := erfData.Header.OffsetToResourceList + erfData.Header.EntryCount*8
 
-	expectUint32(
+	test.ExpectUint32(
 		t,
 		"ResourceData (bytes)",
 		uint32(stat.Size()-int64(toSkip)),

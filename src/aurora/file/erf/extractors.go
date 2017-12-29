@@ -2,99 +2,197 @@ package erf
 
 import (
 	auroraFile "aurora/file"
-	"aurora/tools"
 	"aurora/tools/fileReader"
 	"os"
 	"strings"
 )
 
-func extractHeader(file *os.File) Header {
+func extractHeader(file *os.File) (Header, error) {
 	var result = Header{}
 
-	result.FileType = strings.Trim(string(fileReader.ReadAndCheck(file, 4)), "\x00")
-	result.Version = strings.Trim(string(fileReader.ReadAndCheck(file, 4)), "\x00")
-	result.LanguageCount = fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4))
-	result.LocalizedStringSize = fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4))
-	result.EntryCount = fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4))
-	result.OffsetToLocalizedString = fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4))
-	result.OffsetToKeyList = fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4))
-	result.OffsetToResourceList = fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4))
-	result.BuildYear = fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4))
-	result.BuildDay = fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4))
-	result.DescriptionStrRef = fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4))
+	bytes, err := fileReader.ReadAndCheck(file, 4)
+	if err != nil {
+		return result, err
+	}
+	result.FileType = strings.Trim(string(bytes), "\x00")
 
-	copy(result.Reserved[:], fileReader.ReadAndCheck(file, 116))
+	bytes, err = fileReader.ReadAndCheck(file, 4)
+	if err != nil {
+		return result, err
+	}
+	result.Version = strings.Trim(string(bytes), "\x00")
 
-	return result
+	bytes, err = fileReader.ReadAndCheck(file, 4)
+	if err != nil {
+		return result, err
+	}
+	result.LanguageCount = fileReader.BytesToUint32LE(bytes)
+	bytes, err = fileReader.ReadAndCheck(file, 4)
+	if err != nil {
+		return result, err
+	}
+	result.LocalizedStringSize = fileReader.BytesToUint32LE(bytes)
+	bytes, err = fileReader.ReadAndCheck(file, 4)
+	if err != nil {
+		return result, err
+	}
+	result.EntryCount = fileReader.BytesToUint32LE(bytes)
+	bytes, err = fileReader.ReadAndCheck(file, 4)
+	if err != nil {
+		return result, err
+	}
+	result.OffsetToLocalizedString = fileReader.BytesToUint32LE(bytes)
+	bytes, err = fileReader.ReadAndCheck(file, 4)
+	if err != nil {
+		return result, err
+	}
+	result.OffsetToKeyList = fileReader.BytesToUint32LE(bytes)
+	bytes, err = fileReader.ReadAndCheck(file, 4)
+	if err != nil {
+		return result, err
+	}
+	result.OffsetToResourceList = fileReader.BytesToUint32LE(bytes)
+	bytes, err = fileReader.ReadAndCheck(file, 4)
+	if err != nil {
+		return result, err
+	}
+	result.BuildYear = fileReader.BytesToUint32LE(bytes)
+	bytes, err = fileReader.ReadAndCheck(file, 4)
+	if err != nil {
+		return result, err
+	}
+	result.BuildDay = fileReader.BytesToUint32LE(bytes)
+	bytes, err = fileReader.ReadAndCheck(file, 4)
+	if err != nil {
+		return result, err
+	}
+	result.DescriptionStrRef = fileReader.BytesToUint32LE(bytes)
+
+	bytes, err = fileReader.ReadAndCheck(file, 116)
+	if err != nil {
+		return result, err
+	}
+	copy(result.Reserved[:], bytes)
+
+	return result, nil
 }
 
-func extractLocalizedStringList(file *os.File, localizedStringSize uint32) []LocalizedStringElement {
+func extractLocalizedStringList(file *os.File, localizedStringSize uint32) ([]LocalizedStringElement, error) {
 	var result = []LocalizedStringElement{}
 
 	var i = uint32(0)
 	for ; i < localizedStringSize; i++ {
-		var element = LocalizedStringElement{
-			LanguageID: auroraFile.Language(fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4))),
-			StringSize: fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4)),
+		langID, err := fileReader.ReadAndCheck(file, 4)
+		if err != nil {
+			return result, err
+		}
+		size, err := fileReader.ReadAndCheck(file, 4)
+		if err != nil {
+			return result, err
 		}
 
-		element.String = strings.Trim(string(fileReader.ReadAndCheck(file, uint32(element.StringSize))), "\x00")
+		var element = LocalizedStringElement{
+			LanguageID: auroraFile.Language(fileReader.BytesToUint32LE(langID)),
+			StringSize: fileReader.BytesToUint32LE(size),
+		}
+
+		str, err := fileReader.ReadAndCheck(file, uint32(element.StringSize))
+		if err != nil {
+			return result, err
+		}
+		element.String = strings.Trim(string(str), "\x00")
 
 		result = append(result, element)
 	}
 
-	return result
+	return result, nil
 }
 
-func extractKeyList(file *os.File, offsetToKeyList int64, entryCount uint32) []KeyElement {
+func extractKeyList(file *os.File, offsetToKeyList int64, entryCount uint32) ([]KeyElement, error) {
 	var result = []KeyElement{}
 
 	_, err := file.Seek(offsetToKeyList, 0)
-	tools.EasyPanic(err)
+	if err != nil {
+		return result, err
+	}
 
 	var i = uint32(0)
 	for ; i < entryCount; i++ {
-		var element = KeyElement{
-			ResRef:  strings.Trim(string(fileReader.ReadAndCheck(file, 16)), "\x00"),
-			ResID:   fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4)),
-			ResType: auroraFile.ResourceType(fileReader.BytesToUint16LE(fileReader.ReadAndCheck(file, 2))),
+		resRef, err := fileReader.ReadAndCheck(file, 16)
+		if err != nil {
+			return result, err
 		}
 
-		var unused = fileReader.ReadAndCheck(file, 2)
+		resID, err := fileReader.ReadAndCheck(file, 4)
+		if err != nil {
+			return result, err
+		}
+
+		resType, err := fileReader.ReadAndCheck(file, 2)
+		if err != nil {
+			return result, err
+		}
+
+		var element = KeyElement{
+			ResRef:  strings.Trim(string(resRef), "\x00"),
+			ResID:   fileReader.BytesToUint32LE(resID),
+			ResType: auroraFile.ResourceType(fileReader.BytesToUint16LE(resType)),
+		}
+
+		unused, err := fileReader.ReadAndCheck(file, 2)
+		if err != nil {
+			return result, err
+		}
 		copy(element.Unused[:], unused)
 
 		result = append(result, element)
 	}
 
-	return result
+	return result, nil
 }
 
-func extractResourceList(file *os.File, offsetToResourceList int64, entryCount uint32) []ResourceElement {
+func extractResourceList(file *os.File, offsetToResourceList int64, entryCount uint32) ([]ResourceElement, error) {
 	var result = []ResourceElement{}
 
 	_, err := file.Seek(offsetToResourceList, 0)
-	tools.EasyPanic(err)
+	if err != nil {
+		return result, err
+	}
 
 	var i = uint32(0)
 	for ; i < entryCount; i++ {
+		offset, err := fileReader.ReadAndCheck(file, 4)
+		if err != nil {
+			return result, err
+		}
+
+		size, err := fileReader.ReadAndCheck(file, 4)
+		if err != nil {
+			return result, err
+		}
+
 		result = append(result, ResourceElement{
-			OffsetToResource: fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4)),
-			ResourceSize:     fileReader.BytesToUint32LE(fileReader.ReadAndCheck(file, 4)),
+			OffsetToResource: fileReader.BytesToUint32LE(offset),
+			ResourceSize:     fileReader.BytesToUint32LE(size),
 		})
 	}
 
-	return result
+	return result, nil
 }
 
-func extractResourceData(file *os.File, offsetToResourceList uint32, entryCount uint32) []byte {
+func extractResourceData(file *os.File, offsetToResourceList uint32, entryCount uint32) ([]byte, error) {
 	var toSkip = offsetToResourceList + entryCount*8
 
 	// Seek to the end of the resources list
 	_, err := file.Seek(int64(toSkip), 0)
-	tools.EasyPanic(err)
+	if err != nil {
+		return []byte{}, err
+	}
 
 	stat, err := file.Stat()
-	tools.EasyPanic(err)
+	if err != nil {
+		return []byte{}, err
+	}
 
 	toRead := stat.Size() - int64(toSkip)
 

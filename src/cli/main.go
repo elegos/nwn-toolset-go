@@ -42,7 +42,10 @@ func main() {
 	}
 
 	// Some stats
-	module := erf.FromFile(fileName)
+	module, err := erf.FromFile(fileName)
+	if err != nil {
+		panic(err)
+	}
 
 	command.DescribeErf(&module)
 

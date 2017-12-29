@@ -2,7 +2,6 @@ package erf
 
 import (
 	"aurora/file"
-	"aurora/tools"
 	"io/ioutil"
 	"os"
 )
@@ -54,21 +53,48 @@ type ERF struct {
 }
 
 // FromFile read the file and return an ERF struct
-func FromFile(fileName string) ERF {
+func FromFile(fileName string) (ERF, error) {
 	var result = ERF{}
 
 	_, err := ioutil.ReadFile(fileName)
-	tools.EasyPanic(err)
+	if err != nil {
+		return result, err
+	}
 
 	file, err := os.Open(fileName)
-	tools.EasyPanic(err)
+	if err != nil {
+		return result, err
+	}
 	defer file.Close()
 
-	result.Header = extractHeader(file)
-	result.LocalizedStringList = extractLocalizedStringList(file, result.Header.LocalizedStringSize)
-	result.KeyList = extractKeyList(file, int64(result.Header.OffsetToKeyList), result.Header.EntryCount)
-	result.ResourceList = extractResourceList(file, int64(result.Header.OffsetToResourceList), result.Header.EntryCount)
-	result.ResourceData = extractResourceData(file, result.Header.OffsetToResourceList, result.Header.EntryCount)
+	header, err := extractHeader(file)
+	if err != nil {
+		return result, err
+	}
+	result.Header = header
 
-	return result
+	result.LocalizedStringList, err = extractLocalizedStringList(file, result.Header.LocalizedStringSize)
+	if err != nil {
+		return result, err
+	}
+
+	keyList, err := extractKeyList(file, int64(result.Header.OffsetToKeyList), result.Header.EntryCount)
+	if err != nil {
+		return result, err
+	}
+	result.KeyList = keyList
+
+	resList, err := extractResourceList(file, int64(result.Header.OffsetToResourceList), result.Header.EntryCount)
+	if err != nil {
+		return result, err
+	}
+	result.ResourceList = resList
+
+	resData, err := extractResourceData(file, result.Header.OffsetToResourceList, result.Header.EntryCount)
+	if err != nil {
+		return result, err
+	}
+	result.ResourceData = resData
+
+	return result, nil
 }

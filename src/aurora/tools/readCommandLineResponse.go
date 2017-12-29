@@ -2,6 +2,7 @@ package tools
 
 import (
 	"bufio"
+	"cli/tools"
 	"fmt"
 	"os"
 )
@@ -13,7 +14,7 @@ func ReadCommandLineResponse(question string) string {
 	fmt.Print(question + " ")
 	text, err := reader.ReadString('\n')
 
-	EasyPanic(err)
+	tools.EasyPanic(err)
 
 	return string(text)
 }

@@ -4,6 +4,7 @@ import (
 	"aurora/file"
 	"aurora/file/erf"
 	"aurora/tools"
+	cliTools "cli/tools"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -16,7 +17,7 @@ func createDirectory(destinationPath string) error {
 	stat, err := os.Stat(destinationPath)
 
 	if os.IsNotExist(err) {
-		tools.EasyPanic(os.Mkdir(destinationPath, stdPermissions))
+		cliTools.EasyPanic(os.Mkdir(destinationPath, stdPermissions))
 	} else if !stat.IsDir() {
 		panic(fmt.Sprintf(
 			"The given path '%s' is a file. Can't proceed extracting the files.",
@@ -30,8 +31,8 @@ func createDirectory(destinationPath string) error {
 			return errors.New("Aborting due to user choice")
 		}
 
-		tools.EasyPanic(tools.RemoveDirectory(destinationPath))
-		tools.EasyPanic(os.Mkdir(destinationPath, stdPermissions))
+		cliTools.EasyPanic(tools.RemoveDirectory(destinationPath))
+		cliTools.EasyPanic(os.Mkdir(destinationPath, stdPermissions))
 
 	}
 
@@ -57,6 +58,6 @@ func ExtractErf(module *erf.ERF, destinationPath string) {
 
 		fmt.Println(fmt.Sprintf("Offset: %010d; File size: %010d bytes; File name: %s", offset, listElement.ResourceSize, fileName))
 		var fileContent = module.ResourceData[offset : offset+listElement.ResourceSize-1]
-		tools.EasyPanic(ioutil.WriteFile(fileName, fileContent, os.FileMode(0644)))
+		cliTools.EasyPanic(ioutil.WriteFile(fileName, fileContent, os.FileMode(0644)))
 	}
 }

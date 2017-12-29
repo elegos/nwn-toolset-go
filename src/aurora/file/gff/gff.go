@@ -1,7 +1,6 @@
 package gff
 
 import (
-	"aurora/tools"
 	"io/ioutil"
 )
 
@@ -74,9 +73,11 @@ func FromBytes(bytes []byte) GFF {
 }
 
 // FromFile read the file and return a GFF struct
-func FromFile(fileName string) GFF {
+func FromFile(fileName string) (GFF, error) {
 	bytes, err := ioutil.ReadFile(fileName)
-	tools.EasyPanic(err)
+	if err != nil {
+		return GFF{}, err
+	}
 
-	return FromBytes(bytes)
+	return FromBytes(bytes), nil
 }
