@@ -8,183 +8,98 @@ import (
 )
 
 func extractHeader(file *os.File) (Header, error) {
-	var result = Header{}
+	var readerBag = fileReader.ByteReaderBag{File: file}
+	var result = Header{
+		FileType:                strings.Trim(fileReader.ReadStringFromBytes(&readerBag, 4), "\x00"),
+		Version:                 strings.Trim(fileReader.ReadStringFromBytes(&readerBag, 4), "\x00"),
+		LanguageCount:           fileReader.ReadUint32FromBytes(&readerBag),
+		LocalizedStringSize:     fileReader.ReadUint32FromBytes(&readerBag),
+		EntryCount:              fileReader.ReadUint32FromBytes(&readerBag),
+		OffsetToLocalizedString: fileReader.ReadUint32FromBytes(&readerBag),
+		OffsetToKeyList:         fileReader.ReadUint32FromBytes(&readerBag),
+		OffsetToResourceList:    fileReader.ReadUint32FromBytes(&readerBag),
+		BuildYear:               fileReader.ReadUint32FromBytes(&readerBag),
+		BuildDay:                fileReader.ReadUint32FromBytes(&readerBag),
+		DescriptionStrRef:       fileReader.ReadUint32FromBytes(&readerBag),
+	}
 
-	bytes, err := fileReader.ReadAndCheck(file, 4)
-	if err != nil {
-		return result, err
-	}
-	result.FileType = strings.Trim(string(bytes), "\x00")
+	var reservedBytes = fileReader.ReadBytes(&readerBag, 116)
 
-	bytes, err = fileReader.ReadAndCheck(file, 4)
-	if err != nil {
-		return result, err
-	}
-	result.Version = strings.Trim(string(bytes), "\x00")
+	copy(result.Reserved[:], reservedBytes)
 
-	bytes, err = fileReader.ReadAndCheck(file, 4)
-	if err != nil {
-		return result, err
-	}
-	result.LanguageCount = fileReader.BytesToUint32LE(bytes)
-	bytes, err = fileReader.ReadAndCheck(file, 4)
-	if err != nil {
-		return result, err
-	}
-	result.LocalizedStringSize = fileReader.BytesToUint32LE(bytes)
-	bytes, err = fileReader.ReadAndCheck(file, 4)
-	if err != nil {
-		return result, err
-	}
-	result.EntryCount = fileReader.BytesToUint32LE(bytes)
-	bytes, err = fileReader.ReadAndCheck(file, 4)
-	if err != nil {
-		return result, err
-	}
-	result.OffsetToLocalizedString = fileReader.BytesToUint32LE(bytes)
-	bytes, err = fileReader.ReadAndCheck(file, 4)
-	if err != nil {
-		return result, err
-	}
-	result.OffsetToKeyList = fileReader.BytesToUint32LE(bytes)
-	bytes, err = fileReader.ReadAndCheck(file, 4)
-	if err != nil {
-		return result, err
-	}
-	result.OffsetToResourceList = fileReader.BytesToUint32LE(bytes)
-	bytes, err = fileReader.ReadAndCheck(file, 4)
-	if err != nil {
-		return result, err
-	}
-	result.BuildYear = fileReader.BytesToUint32LE(bytes)
-	bytes, err = fileReader.ReadAndCheck(file, 4)
-	if err != nil {
-		return result, err
-	}
-	result.BuildDay = fileReader.BytesToUint32LE(bytes)
-	bytes, err = fileReader.ReadAndCheck(file, 4)
-	if err != nil {
-		return result, err
-	}
-	result.DescriptionStrRef = fileReader.BytesToUint32LE(bytes)
-
-	bytes, err = fileReader.ReadAndCheck(file, 116)
-	if err != nil {
-		return result, err
-	}
-	copy(result.Reserved[:], bytes)
-
-	return result, nil
+	return result, readerBag.Err
 }
 
 func extractLocalizedStringList(file *os.File, localizedStringSize uint32) ([]LocalizedStringElement, error) {
 	var result = []LocalizedStringElement{}
+	// TODO bug? From where do I read? Missing file.Seek
 
 	var i = uint32(0)
+	var readerBag = fileReader.ByteReaderBag{File: file}
 	for ; i < localizedStringSize; i++ {
-		langID, err := fileReader.ReadAndCheck(file, 4)
-		if err != nil {
-			return result, err
-		}
-		size, err := fileReader.ReadAndCheck(file, 4)
-		if err != nil {
-			return result, err
-		}
-
 		var element = LocalizedStringElement{
-			LanguageID: auroraFile.Language(fileReader.BytesToUint32LE(langID)),
-			StringSize: fileReader.BytesToUint32LE(size),
+			LanguageID: auroraFile.Language(fileReader.ReadUint32FromBytes(&readerBag)),
+			StringSize: fileReader.ReadUint32FromBytes(&readerBag),
 		}
-
-		str, err := fileReader.ReadAndCheck(file, uint32(element.StringSize))
-		if err != nil {
-			return result, err
-		}
-		element.String = strings.Trim(string(str), "\x00")
+		element.String = strings.Trim(fileReader.ReadStringFromBytes(&readerBag, element.StringSize), "\x00")
 
 		result = append(result, element)
 	}
 
-	return result, nil
+	return result, readerBag.Err
 }
 
 func extractKeyList(file *os.File, offsetToKeyList int64, entryCount uint32) ([]KeyElement, error) {
 	var result = []KeyElement{}
 
-	_, err := file.Seek(offsetToKeyList, 0)
+	_, err := file.Seek(offsetToKeyList, os.SEEK_SET)
 	if err != nil {
 		return result, err
 	}
 
 	var i = uint32(0)
+	var readerBag = fileReader.ByteReaderBag{File: file}
 	for ; i < entryCount; i++ {
-		resRef, err := fileReader.ReadAndCheck(file, 16)
-		if err != nil {
-			return result, err
-		}
-
-		resID, err := fileReader.ReadAndCheck(file, 4)
-		if err != nil {
-			return result, err
-		}
-
-		resType, err := fileReader.ReadAndCheck(file, 2)
-		if err != nil {
-			return result, err
-		}
-
 		var element = KeyElement{
-			ResRef:  strings.Trim(string(resRef), "\x00"),
-			ResID:   fileReader.BytesToUint32LE(resID),
-			ResType: auroraFile.ResourceType(fileReader.BytesToUint16LE(resType)),
+			ResRef:  strings.Trim(fileReader.ReadStringFromBytes(&readerBag, 16), "\x00"),
+			ResID:   fileReader.ReadUint32FromBytes(&readerBag),
+			ResType: auroraFile.ResourceType(fileReader.ReadUint16FromBytes(&readerBag)),
 		}
 
-		unused, err := fileReader.ReadAndCheck(file, 2)
-		if err != nil {
-			return result, err
-		}
+		unused := fileReader.ReadBytes(&readerBag, 2)
 		copy(element.Unused[:], unused)
 
 		result = append(result, element)
 	}
 
-	return result, nil
+	return result, readerBag.Err
 }
 
 func extractResourceList(file *os.File, offsetToResourceList int64, entryCount uint32) ([]ResourceElement, error) {
 	var result = []ResourceElement{}
 
-	_, err := file.Seek(offsetToResourceList, 0)
+	_, err := file.Seek(offsetToResourceList, os.SEEK_SET)
 	if err != nil {
 		return result, err
 	}
 
 	var i = uint32(0)
+	var readerBag = fileReader.ByteReaderBag{File: file}
 	for ; i < entryCount; i++ {
-		offset, err := fileReader.ReadAndCheck(file, 4)
-		if err != nil {
-			return result, err
-		}
-
-		size, err := fileReader.ReadAndCheck(file, 4)
-		if err != nil {
-			return result, err
-		}
-
 		result = append(result, ResourceElement{
-			OffsetToResource: fileReader.BytesToUint32LE(offset),
-			ResourceSize:     fileReader.BytesToUint32LE(size),
+			OffsetToResource: fileReader.ReadUint32FromBytes(&readerBag),
+			ResourceSize:     fileReader.ReadUint32FromBytes(&readerBag),
 		})
 	}
 
-	return result, nil
+	return result, readerBag.Err
 }
 
 func extractResourceData(file *os.File, offsetToResourceList uint32, entryCount uint32) ([]byte, error) {
 	var toSkip = offsetToResourceList + entryCount*8
 
 	// Seek to the end of the resources list
-	_, err := file.Seek(int64(toSkip), 0)
+	_, err := file.Seek(int64(toSkip), os.SEEK_SET)
 	if err != nil {
 		return []byte{}, err
 	}
