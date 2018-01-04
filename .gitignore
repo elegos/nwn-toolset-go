@@ -8,3 +8,7 @@
 # coverage files
 /coverage.txt
 /coverage.*.txt
+
+# test-exported files
+/extracted
+

@@ -20,8 +20,15 @@ func main() {
 	}
 
 	extract := flag.String("extract", "", "ACTION: extract the file contents in the specified directory")
+	readAre := flag.String("read-are", "", "ACTION: explain the given ARE file")
 	readGff := flag.Bool("read-gff", false, "ACTION: explain the GFF files found in the module")
 	flag.Parse()
+
+	if *readAre != "" {
+		command.ReadAreFromFile(*readAre)
+
+		return
+	}
 
 	if flag.NArg() < 1 {
 		flag.Usage()
