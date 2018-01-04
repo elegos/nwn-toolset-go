@@ -1,0 +1,11 @@
+goenv = cmd /c set "GOPATH=%cd%" && set "GOBIN=%cd%\bin" &&
+
+# Rules
+rule gobuild
+  command = $goenv go build -o $out $in
+
+rule goget
+  command = $goenv go get $package
+
+# Build (binary)
+build bin\cli.exe: gobuild src/cli/main.go
