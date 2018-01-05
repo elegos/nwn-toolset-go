@@ -1,6 +1,7 @@
 package gff
 
 import (
+	"aurora/file"
 	"io/ioutil"
 )
 
@@ -22,8 +23,8 @@ type Header struct {
 	ListIndicesCount   uint32 // Number of bytes in List Indices array
 }
 
-// StructArrayElement the element of the StructArray
-type StructArrayElement struct {
+// Struct the element of the StructArray
+type Struct struct {
 	// Type programmer-defined integer ID
 	Type uint32 // Programmer-defined integer ID
 	// DataOrDataOffset if FieldCount = 1, this is an index into the Field Array.
@@ -34,13 +35,58 @@ type StructArrayElement struct {
 	FieldCount       uint32 // Number of fields in this Struct
 }
 
+// ListIndex the list of indexes of a list
+type ListIndex struct {
+	Indexes []uint32
+}
+
 // FieldArrayElement the element of FieldArray
 type FieldArrayElement struct {
-	Type             uint32
+	Type             FieldType
 	LabelIndex       uint32 // Index into the Label Array
 	DataOrDataOffset uint32 // If Type is a simple data type, then this is the value
 	// actual of the field. If Type is a complex data type,
 	// then this is a byte offset into the Field Data block.
+}
+
+// CExoLocStringSubString sub-element of CExoLocString
+type CExoLocStringSubString struct {
+	LanguageID file.Language // The language's id
+	Masculine  bool          // If false, feminine
+	String     string
+}
+
+// CExoLocString localised string
+type CExoLocString struct {
+	StringRef  uint32 // Index into the user's dialog.tlk file. If 0xffffffff, it doesn't reference the tlk file.
+	SubStrings []CExoLocStringSubString
+}
+
+// FieldDataStruct the field's data structure to keep any possible value. Only one is valorised.
+type FieldDataStruct struct {
+	ByteValue          int8
+	CharValue          string
+	WordValue          uint16
+	ShortValue         int16
+	DwordValue         uint32
+	IntValue           int32
+	Dword64Value       uint64
+	Int64Value         int64
+	FloatValue         float32
+	DoubleValue        float64
+	CExoStringValue    string
+	CResRefValue       string
+	CExoLocStringValue CExoLocString
+	VoidValue          []byte
+	StructIndexValue   uint32
+	ListOffsetValue    uint32 // Index in the Struct Array Data
+}
+
+// Field a struct's field
+type Field struct {
+	Type  FieldType
+	Label string
+	Data  FieldDataStruct
 }
 
 // ListIndicesElement the element of ListIndicesArray
@@ -49,12 +95,12 @@ type ListIndicesElement []uint32
 // GFF Generic File Format
 type GFF struct {
 	Header            Header
-	StructArray       []StructArrayElement
+	StructArray       []Struct
 	FieldArray        []FieldArrayElement
 	LabelArray        []string
 	FieldDataBlock    []byte
 	FieldIndicesArray []uint32
-	ListIndicesArray  []ListIndicesElement
+	ListIndicesArray  [][]uint32
 }
 
 // FromBytes read the bytes and return a GFF struct
