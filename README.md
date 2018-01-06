@@ -40,23 +40,22 @@ SOFTWARE.
 - `ninja` command ([website](https://ninja-build.org/))
 
 ## How to build
-In terminal / command line, in the project's directory, simply run `ninja`. It
-will parse the build.ninja file and compile the executable in the `bin` folder.
-
-You can manually build the project running the following commands:
-
-- Linux/OSX: ``GOBIN=`pwd`/bin GOPATH=`pwd` go install [project name]``
-- Windows: `set GOBIN=%path%; set GOPATH=%path%; go install [project name]`
-
-Where `[project name]` can be `cli` or any `src` top-level directory (note: the `aurora`
-folder has no main package, thus it's not an executable)
+On Linux and OSX, just type `ninja` in the terminal / command line. It will parse
+the build.ninja file and compile the executable in the `bin` folder. If on Windows,
+run `.\windows.cmd`: for more options run `.\windows.cmd /?`.
 
 Please note that `ninja` won't compile the binary again, if it doesn't find any
 changes in the main go file. For this reason, you may want to run it in this way:
 
     ninja -t clean; ninja [&& ./bin/cli src/aurora/file/erf/test/module.mod]
 
-`./bin/cli -h` will show the help message.
+On windows:
+
+    .\windows.cmd /a
+
+Which stands for `/a`ll (clean and compile)
+
+`./bin/cli -h` (`.\bin\cli.exe -h` on Windows) will show the help message.
 
 ## IDE / editor of choice
 The editor of choice for this project is  [Atom](https://atom.io) with the
