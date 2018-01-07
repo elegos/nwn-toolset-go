@@ -3,3 +3,4 @@
 /src/*.*
 /.ninja_deps
 /.ninja_log
+/.env
