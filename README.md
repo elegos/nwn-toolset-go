@@ -66,11 +66,16 @@ After installing Atom, you can simply run `apm install go-plus`, or go under Set
 Install and search for go-plus. After the installation you'll need to configure the plugin:
 Settings -> Packages -> go-plus (cogwheel icon: settings) -> `GOPATH`: (where you cloned the repo).
 
+Alternatively to setting go-plus's GOPATH variable, you can create a `.env` file, installing
+the `atom-env-for-project` plugin too, and setting GOPATH in the root of the project (this will
+allow you to write multiple go projects with different GOPATHs).
+
 Other suggested packages are:
 
 Packages:
-- `project-manager`: to create a per-project settings (useful to setup go-plus).
+- `project-manager`: to manage different projects
 - `file-icons`: to recognise the files in the tree view by their icons, rather than their extension.
+- `atom-env-for-project`: use `.env` files to setup per-project environment settings
 
 Themes:
 - `atom-material-syntax`
