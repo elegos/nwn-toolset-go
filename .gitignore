@@ -4,3 +4,7 @@
 /.ninja_deps
 /.ninja_log
 /.env
+
+# coverage files
+/coverage.txt
+/coverage.*.txt

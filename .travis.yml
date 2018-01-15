@@ -1,0 +1,16 @@
+language: go
+
+go:
+  - 1.9.x
+  - tip
+
+before_install:
+  - export GOPATH=`pwd`
+  - export GOBIN=`pwd`/bin
+  - go get -t -v aurora/...
+
+script:
+  - ./run-tests.sh
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
