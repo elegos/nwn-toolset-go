@@ -1,5 +1,7 @@
 # Neverwinter Nights Toolset (written in go)
 
+[![codecov](https://codecov.io/gh/elegos/nwn-toolset-go/branch/master/graph/badge.svg)](https://codecov.io/gh/elegos/nwn-toolset-go)
+
 ## Goal of the project
 To create an alternative Toolset for Neverwinter Nights, cross-platform
 (mainly addressed to Linux). After having replicated the funcionalities,
