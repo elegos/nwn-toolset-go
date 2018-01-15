@@ -16,6 +16,8 @@ func checkKeyListElement(t *testing.T, erfData erf.ERF, index int, resRef string
 }
 
 func TestFromFile(t *testing.T) {
+	t.Parallel()
+
 	var filePath = "test/module.mod"
 	erfData, err := erf.FromFile(filePath)
 

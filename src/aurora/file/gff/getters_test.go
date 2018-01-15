@@ -105,6 +105,8 @@ func getFields() []gff.Field {
 }
 
 func TestGetField(t *testing.T) {
+	t.Parallel()
+
 	var fields = getFields()
 
 	fieldResult, err := gff.GetField(byteField.Label, fields[:])
@@ -121,6 +123,8 @@ func TestGetField(t *testing.T) {
 }
 
 func TestGetFieldInt32Value(t *testing.T) {
+	t.Parallel()
+
 	var fields = getFields()
 	var errorBag = gff.ErrorBag{}
 
@@ -141,6 +145,8 @@ func TestGetFieldInt32Value(t *testing.T) {
 }
 
 func TestGetFieldUint32Value(t *testing.T) {
+	t.Parallel()
+
 	var fields = getFields()
 	var errorBag = gff.ErrorBag{}
 
@@ -161,6 +167,8 @@ func TestGetFieldUint32Value(t *testing.T) {
 }
 
 func TestGetFieldUint16Value(t *testing.T) {
+	t.Parallel()
+
 	var fields = getFields()
 	var errorBag = gff.ErrorBag{}
 
@@ -181,6 +189,8 @@ func TestGetFieldUint16Value(t *testing.T) {
 }
 
 func TestGetFieldByteValue(t *testing.T) {
+	t.Parallel()
+
 	var fields = getFields()
 	var errorBag = gff.ErrorBag{}
 
@@ -201,6 +211,8 @@ func TestGetFieldByteValue(t *testing.T) {
 }
 
 func TestGetFieldFloatValue(t *testing.T) {
+	t.Parallel()
+
 	var fields = getFields()
 	var errorBag = gff.ErrorBag{}
 
@@ -221,6 +233,8 @@ func TestGetFieldFloatValue(t *testing.T) {
 }
 
 func TestGetFieldCExoStringValue(t *testing.T) {
+	t.Parallel()
+
 	var fields = getFields()
 	var errorBag = gff.ErrorBag{}
 
@@ -241,6 +255,8 @@ func TestGetFieldCExoStringValue(t *testing.T) {
 }
 
 func TestGetFieldCResRefValue(t *testing.T) {
+	t.Parallel()
+
 	var fields = getFields()
 	var errorBag = gff.ErrorBag{}
 
@@ -261,6 +277,8 @@ func TestGetFieldCResRefValue(t *testing.T) {
 }
 
 func TestGetFieldListByteOffsetValue(t *testing.T) {
+	t.Parallel()
+
 	var fields = getFields()
 	var errorBag = gff.ErrorBag{}
 
@@ -281,6 +299,8 @@ func TestGetFieldListByteOffsetValue(t *testing.T) {
 }
 
 func TestGetFieldCExoLocStringValue(t *testing.T) {
+	t.Parallel()
+
 	var fields = getFields()
 	var errorBag = gff.ErrorBag{}
 

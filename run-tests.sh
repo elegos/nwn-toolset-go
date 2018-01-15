@@ -5,6 +5,7 @@ set -e
 export GOPATH=`pwd`
 export GOBIN=`pwd`/bin
 export GOMAXPROCS=`grep -c ^processor /proc/cpuinfo`
+<<<<<<< HEAD
 
 # Remove old coverage file
 rm -f coverage.txt

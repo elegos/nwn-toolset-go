@@ -6,6 +6,8 @@ import (
 )
 
 func TestExpectString(t *testing.T) {
+	t.Parallel()
+
 	var tStruct = testing.T{}
 	var field = "field"
 	var expected = "test string"
@@ -25,6 +27,8 @@ func TestExpectString(t *testing.T) {
 }
 
 func TestExpectFloat32(t *testing.T) {
+	t.Parallel()
+
 	var tStruct = testing.T{}
 	var field = "field"
 	var expected = float32(0.987)
@@ -44,6 +48,8 @@ func TestExpectFloat32(t *testing.T) {
 }
 
 func TestExpectUint32(t *testing.T) {
+	t.Parallel()
+
 	var tStruct = testing.T{}
 	var field = "field"
 	var expected = uint32(15)
@@ -63,6 +69,8 @@ func TestExpectUint32(t *testing.T) {
 }
 
 func TestExpectInt32(t *testing.T) {
+	t.Parallel()
+
 	var tStruct = testing.T{}
 	var field = "field"
 	var expected = int32(15)
@@ -82,6 +90,8 @@ func TestExpectInt32(t *testing.T) {
 }
 
 func TestExpectUint16(t *testing.T) {
+	t.Parallel()
+
 	var tStruct = testing.T{}
 	var field = "field"
 	var expected = uint16(15)
@@ -101,6 +111,8 @@ func TestExpectUint16(t *testing.T) {
 }
 
 func TestExpectUint8(t *testing.T) {
+	t.Parallel()
+
 	var tStruct = testing.T{}
 	var field = "field"
 	var expected = uint8(66)
@@ -120,6 +132,8 @@ func TestExpectUint8(t *testing.T) {
 }
 
 func TestExpectInt8(t *testing.T) {
+	t.Parallel()
+
 	var tStruct = testing.T{}
 	var field = "field"
 	var expected = int8(15)
