@@ -2,12 +2,17 @@ package erf
 
 import (
 	auroraFile "aurora/file"
+	"aurora/tools"
 	"aurora/tools/fileReader"
 	"os"
 	"strings"
 )
 
-func extractHeader(file *os.File) (Header, error) {
+func extractHeader(file *os.File, errorBag *tools.ErrorBag) Header {
+	if errorBag.Error != nil {
+		return Header{}
+	}
+
 	var readerBag = fileReader.ByteReaderBag{File: file}
 	var result = Header{
 		FileType:                strings.Trim(fileReader.ReadStringFromBytes(&readerBag, 4), "\x00"),
@@ -27,10 +32,16 @@ func extractHeader(file *os.File) (Header, error) {
 
 	copy(result.Reserved[:], reservedBytes)
 
-	return result, readerBag.Err
+	errorBag.Error = readerBag.Err
+
+	return result
 }
 
-func extractLocalizedStringList(file *os.File, localizedStringSize uint32) ([]LocalizedStringElement, error) {
+func extractLocalizedStringList(file *os.File, localizedStringSize uint32, errorBag *tools.ErrorBag) []LocalizedStringElement {
+	if errorBag.Error != nil {
+		return []LocalizedStringElement{}
+	}
+
 	var result = []LocalizedStringElement{}
 	// TODO bug? From where do I read? Missing file.Seek
 
@@ -46,15 +57,23 @@ func extractLocalizedStringList(file *os.File, localizedStringSize uint32) ([]Lo
 		result = append(result, element)
 	}
 
-	return result, readerBag.Err
+	errorBag.Error = readerBag.Err
+
+	return result
 }
 
-func extractKeyList(file *os.File, offsetToKeyList int64, entryCount uint32) ([]KeyElement, error) {
+func extractKeyList(file *os.File, offsetToKeyList int64, entryCount uint32, errorBag *tools.ErrorBag) []KeyElement {
 	var result = []KeyElement{}
+
+	if errorBag.Error != nil {
+		return result
+	}
 
 	_, err := file.Seek(offsetToKeyList, os.SEEK_SET)
 	if err != nil {
-		return result, err
+		errorBag.Error = err
+
+		return result
 	}
 
 	var i = uint32(0)
@@ -72,15 +91,23 @@ func extractKeyList(file *os.File, offsetToKeyList int64, entryCount uint32) ([]
 		result = append(result, element)
 	}
 
-	return result, readerBag.Err
+	errorBag.Error = readerBag.Err
+
+	return result
 }
 
-func extractResourceList(file *os.File, offsetToResourceList int64, entryCount uint32) ([]ResourceElement, error) {
+func extractResourceList(file *os.File, offsetToResourceList int64, entryCount uint32, errorBag *tools.ErrorBag) []ResourceElement {
 	var result = []ResourceElement{}
+
+	if errorBag.Error != nil {
+		return []ResourceElement{}
+	}
 
 	_, err := file.Seek(offsetToResourceList, os.SEEK_SET)
 	if err != nil {
-		return result, err
+		errorBag.Error = err
+
+		return result
 	}
 
 	var i = uint32(0)
@@ -92,24 +119,37 @@ func extractResourceList(file *os.File, offsetToResourceList int64, entryCount u
 		})
 	}
 
-	return result, readerBag.Err
+	errorBag.Error = readerBag.Err
+
+	return result
 }
 
-func extractResourceData(file *os.File, offsetToResourceList uint32, entryCount uint32) ([]byte, error) {
+func extractResourceData(file *os.File, offsetToResourceList uint32, entryCount uint32, errorBag *tools.ErrorBag) []byte {
+	if errorBag.Error != nil {
+		return []byte{}
+	}
+
 	var toSkip = offsetToResourceList + entryCount*8
 
 	// Seek to the end of the resources list
 	_, err := file.Seek(int64(toSkip), os.SEEK_SET)
 	if err != nil {
-		return []byte{}, err
+		errorBag.Error = err
+
+		return []byte{}
 	}
 
 	stat, err := file.Stat()
 	if err != nil {
-		return []byte{}, err
+		errorBag.Error = err
+
+		return []byte{}
 	}
 
 	toRead := stat.Size() - int64(toSkip)
 
-	return fileReader.ReadAndCheck(file, uint32(toRead))
+	result, err := fileReader.ReadAndCheck(file, uint32(toRead))
+	errorBag.Error = err
+
+	return result
 }

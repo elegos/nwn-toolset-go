@@ -3,6 +3,7 @@ package gff_test
 import (
 	"aurora/file"
 	"aurora/file/gff"
+	"aurora/tools"
 	"aurora/tools/test"
 	"testing"
 )
@@ -126,7 +127,7 @@ func TestGetFieldInt32Value(t *testing.T) {
 	t.Parallel()
 
 	var fields = getFields()
-	var errorBag = gff.ErrorBag{}
+	var errorBag = tools.ErrorBag{}
 
 	result := gff.GetFieldInt32Value(int32Field.Label, fields, &errorBag)
 	if errorBag.Error != nil {
@@ -148,7 +149,7 @@ func TestGetFieldUint32Value(t *testing.T) {
 	t.Parallel()
 
 	var fields = getFields()
-	var errorBag = gff.ErrorBag{}
+	var errorBag = tools.ErrorBag{}
 
 	result := gff.GetFieldUint32Value(uint32Field.Label, fields, &errorBag)
 	if errorBag.Error != nil {
@@ -170,7 +171,7 @@ func TestGetFieldUint16Value(t *testing.T) {
 	t.Parallel()
 
 	var fields = getFields()
-	var errorBag = gff.ErrorBag{}
+	var errorBag = tools.ErrorBag{}
 
 	result := gff.GetFieldUint16Value(uint16Field.Label, fields, &errorBag)
 	if errorBag.Error != nil {
@@ -192,7 +193,7 @@ func TestGetFieldByteValue(t *testing.T) {
 	t.Parallel()
 
 	var fields = getFields()
-	var errorBag = gff.ErrorBag{}
+	var errorBag = tools.ErrorBag{}
 
 	result := gff.GetFieldByteValue(byteField.Label, fields, &errorBag)
 	if errorBag.Error != nil {
@@ -214,7 +215,7 @@ func TestGetFieldFloatValue(t *testing.T) {
 	t.Parallel()
 
 	var fields = getFields()
-	var errorBag = gff.ErrorBag{}
+	var errorBag = tools.ErrorBag{}
 
 	result := gff.GetFieldFloatValue(float32Field.Label, fields, &errorBag)
 	if errorBag.Error != nil {
@@ -236,7 +237,7 @@ func TestGetFieldCExoStringValue(t *testing.T) {
 	t.Parallel()
 
 	var fields = getFields()
-	var errorBag = gff.ErrorBag{}
+	var errorBag = tools.ErrorBag{}
 
 	result := gff.GetFieldCExoStringValue(cExoStringField.Label, fields, &errorBag)
 	if errorBag.Error != nil {
@@ -258,7 +259,7 @@ func TestGetFieldCResRefValue(t *testing.T) {
 	t.Parallel()
 
 	var fields = getFields()
-	var errorBag = gff.ErrorBag{}
+	var errorBag = tools.ErrorBag{}
 
 	result := gff.GetFieldCResRefValue(cResRefField.Label, fields, &errorBag)
 	if errorBag.Error != nil {
@@ -280,7 +281,7 @@ func TestGetFieldListByteOffsetValue(t *testing.T) {
 	t.Parallel()
 
 	var fields = getFields()
-	var errorBag = gff.ErrorBag{}
+	var errorBag = tools.ErrorBag{}
 
 	result := gff.GetFieldListByteOffsetValue(listField.Label, fields, &errorBag)
 	if errorBag.Error != nil {
@@ -302,7 +303,7 @@ func TestGetFieldCExoLocStringValue(t *testing.T) {
 	t.Parallel()
 
 	var fields = getFields()
-	var errorBag = gff.ErrorBag{}
+	var errorBag = tools.ErrorBag{}
 
 	result := gff.GetFieldCExoLocStringValue(cExoLocStringField.Label, fields, &errorBag)
 	if errorBag.Error != nil {

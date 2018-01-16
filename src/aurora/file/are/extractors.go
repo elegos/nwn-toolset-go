@@ -2,9 +2,10 @@ package are
 
 import (
 	"aurora/file/gff"
+	"aurora/tools"
 )
 
-func extractAreaTilesList(byteOffset uint32, gffFile gff.GFF, errorBag *gff.ErrorBag) []AreaTile {
+func extractAreaTilesList(byteOffset uint32, gffFile gff.GFF, errorBag *tools.ErrorBag) []AreaTile {
 	var result = []AreaTile{}
 
 	if errorBag.Error != nil {

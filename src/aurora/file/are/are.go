@@ -2,6 +2,7 @@ package are
 
 import (
 	"aurora/file/gff"
+	"aurora/tools"
 	"errors"
 	"fmt"
 )
@@ -119,7 +120,7 @@ func FromBytes(bytes []byte) (ARE, error) {
 		return result, err
 	}
 
-	var errorBag = gff.ErrorBag{}
+	var errorBag = tools.ErrorBag{}
 	result.Data = Data{
 		ID:        gff.GetFieldInt32Value("ID", fields, &errorBag),
 		CreatorID: gff.GetFieldInt32Value("Creator_ID", fields, &errorBag),

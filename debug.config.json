@@ -1,0 +1,10 @@
+{
+  "configurations": [
+    {
+      "name": "CLI: read ARE file",
+      "mode": "debug",
+      "cwd": "${workspaceRoot}/src/cli",
+      "args": ["-read-are", "../../extracted/barrowsinterior8.are"]
+    }
+  ]
+}

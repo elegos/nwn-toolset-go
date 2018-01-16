@@ -2,6 +2,7 @@ package erf
 
 import (
 	"aurora/file"
+	"aurora/tools"
 	"io/ioutil"
 	"os"
 )
@@ -67,34 +68,13 @@ func FromFile(fileName string) (ERF, error) {
 	}
 	defer file.Close()
 
-	header, err := extractHeader(file)
-	if err != nil {
-		return result, err
-	}
-	result.Header = header
+	var errorBag = tools.ErrorBag{}
 
-	result.LocalizedStringList, err = extractLocalizedStringList(file, result.Header.LocalizedStringSize)
-	if err != nil {
-		return result, err
-	}
+	result.Header = extractHeader(file, &errorBag)
+	result.LocalizedStringList = extractLocalizedStringList(file, result.Header.LocalizedStringSize, &errorBag)
+	result.KeyList = extractKeyList(file, int64(result.Header.OffsetToKeyList), result.Header.EntryCount, &errorBag)
+	result.ResourceList = extractResourceList(file, int64(result.Header.OffsetToResourceList), result.Header.EntryCount, &errorBag)
+	result.ResourceData = extractResourceData(file, result.Header.OffsetToResourceList, result.Header.EntryCount, &errorBag)
 
-	keyList, err := extractKeyList(file, int64(result.Header.OffsetToKeyList), result.Header.EntryCount)
-	if err != nil {
-		return result, err
-	}
-	result.KeyList = keyList
-
-	resList, err := extractResourceList(file, int64(result.Header.OffsetToResourceList), result.Header.EntryCount)
-	if err != nil {
-		return result, err
-	}
-	result.ResourceList = resList
-
-	resData, err := extractResourceData(file, result.Header.OffsetToResourceList, result.Header.EntryCount)
-	if err != nil {
-		return result, err
-	}
-	result.ResourceData = resData
-
-	return result, nil
+	return result, errorBag.Error
 }

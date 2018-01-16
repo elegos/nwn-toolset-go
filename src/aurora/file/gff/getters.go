@@ -1,11 +1,9 @@
 package gff
 
-import "fmt"
-
-// ErrorBag used to read field values with possible errors
-type ErrorBag struct {
-	Error error
-}
+import (
+	"aurora/tools"
+	"fmt"
+)
 
 // GetField get the required field
 func GetField(name string, fields []Field) (Field, error) {
@@ -19,7 +17,7 @@ func GetField(name string, fields []Field) (Field, error) {
 }
 
 // GetFieldInt32Value return the int32 value
-func GetFieldInt32Value(name string, fields []Field, errorBag *ErrorBag) int32 {
+func GetFieldInt32Value(name string, fields []Field, errorBag *tools.ErrorBag) int32 {
 	if errorBag.Error != nil {
 		return 0
 	}
@@ -42,7 +40,7 @@ func GetFieldInt32Value(name string, fields []Field, errorBag *ErrorBag) int32 {
 }
 
 // GetFieldUint32Value return the uint32 value
-func GetFieldUint32Value(name string, fields []Field, errorBag *ErrorBag) uint32 {
+func GetFieldUint32Value(name string, fields []Field, errorBag *tools.ErrorBag) uint32 {
 	if errorBag.Error != nil {
 		return 0
 	}
@@ -65,7 +63,7 @@ func GetFieldUint32Value(name string, fields []Field, errorBag *ErrorBag) uint32
 }
 
 // GetFieldListByteOffsetValue return the byte offset from the beginning of the List Indices Array
-func GetFieldListByteOffsetValue(name string, fields []Field, errorBag *ErrorBag) uint32 {
+func GetFieldListByteOffsetValue(name string, fields []Field, errorBag *tools.ErrorBag) uint32 {
 	if errorBag.Error != nil {
 		return 0
 	}
@@ -88,7 +86,7 @@ func GetFieldListByteOffsetValue(name string, fields []Field, errorBag *ErrorBag
 }
 
 // GetFieldUint16Value return the uint16 value
-func GetFieldUint16Value(name string, fields []Field, errorBag *ErrorBag) uint16 {
+func GetFieldUint16Value(name string, fields []Field, errorBag *tools.ErrorBag) uint16 {
 	if errorBag.Error != nil {
 		return 0
 	}
@@ -111,7 +109,7 @@ func GetFieldUint16Value(name string, fields []Field, errorBag *ErrorBag) uint16
 }
 
 // GetFieldByteValue return the int8 value
-func GetFieldByteValue(name string, fields []Field, errorBag *ErrorBag) int8 {
+func GetFieldByteValue(name string, fields []Field, errorBag *tools.ErrorBag) int8 {
 	if errorBag.Error != nil {
 		return 0
 	}
@@ -134,7 +132,7 @@ func GetFieldByteValue(name string, fields []Field, errorBag *ErrorBag) int8 {
 }
 
 // GetFieldFloatValue get the field's float value
-func GetFieldFloatValue(name string, fields []Field, errorBag *ErrorBag) float32 {
+func GetFieldFloatValue(name string, fields []Field, errorBag *tools.ErrorBag) float32 {
 	if errorBag.Error != nil {
 		return 0
 	}
@@ -157,7 +155,7 @@ func GetFieldFloatValue(name string, fields []Field, errorBag *ErrorBag) float32
 }
 
 // GetFieldCExoStringValue get the field's CExoString value
-func GetFieldCExoStringValue(name string, fields []Field, errorBag *ErrorBag) string {
+func GetFieldCExoStringValue(name string, fields []Field, errorBag *tools.ErrorBag) string {
 	if errorBag.Error != nil {
 		return ""
 	}
@@ -180,7 +178,7 @@ func GetFieldCExoStringValue(name string, fields []Field, errorBag *ErrorBag) st
 }
 
 // GetFieldCResRefValue get the fields's CResRef value
-func GetFieldCResRefValue(name string, fields []Field, errorBag *ErrorBag) string {
+func GetFieldCResRefValue(name string, fields []Field, errorBag *tools.ErrorBag) string {
 	if errorBag.Error != nil {
 		return ""
 	}
@@ -203,7 +201,7 @@ func GetFieldCResRefValue(name string, fields []Field, errorBag *ErrorBag) strin
 }
 
 // GetFieldCExoLocStringValue get the field's CExoLocString value(s)
-func GetFieldCExoLocStringValue(name string, fields []Field, errorBag *ErrorBag) CExoLocString {
+func GetFieldCExoLocStringValue(name string, fields []Field, errorBag *tools.ErrorBag) CExoLocString {
 	if errorBag.Error != nil {
 		return CExoLocString{}
 	}
