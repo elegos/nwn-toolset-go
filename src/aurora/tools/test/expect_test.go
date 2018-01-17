@@ -151,3 +151,24 @@ func TestExpectInt8(t *testing.T) {
 		t.Error("Expected fail, not failed")
 	}
 }
+
+func TestExpectBool(t *testing.T) {
+	t.Parallel()
+
+	var tStruct = testing.T{}
+	var field = "field"
+	var expected = true
+	var incorrectValue = false
+
+	test.ExpectBool(&tStruct, field, expected, expected)
+
+	if tStruct.Failed() {
+		t.Error("Expected no fail, failed")
+	}
+
+	test.ExpectBool(&tStruct, field, expected, incorrectValue)
+
+	if !tStruct.Failed() {
+		t.Error("Expected fail, not failed")
+	}
+}

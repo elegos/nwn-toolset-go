@@ -18,6 +18,11 @@ func checkKeyListElement(t *testing.T, erfData erf.ERF, index int, resRef string
 func TestFromFile(t *testing.T) {
 	t.Parallel()
 
+	_, err := erf.FromFile("fc53e944-34a6-48fa-aaba-eab61d026a60.doesnotexist")
+	if err == nil {
+		t.Error("Expected error, none found")
+	}
+
 	var filePath = "test/module.mod"
 	erfData, err := erf.FromFile(filePath)
 

@@ -4,7 +4,7 @@
       "name": "CLI: read ARE file",
       "mode": "debug",
       "cwd": "${workspaceRoot}/src/cli",
-      "args": ["-read-are", "../../extracted/barrowsinterior8.are"]
+      "args": ["-read-are", "../aurora/file/are/test/barrowsinterior8.are"]
     }
   ]
 }
